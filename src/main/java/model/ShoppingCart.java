@@ -40,10 +40,23 @@ public class ShoppingCart extends Subject {
         products.remove(p);
         this.notifyObservers(this);
     }
+
+    public void removeProduct(int id) throws ShoppingCartException{
+
+        for (Product p : products){
+            if(products.contains(p)){
+                removerProduct(p);
+                break; //Como o
+            }
+
+        }
+    }
+
     public Product lastProductAdded(){
           return products.get(products.size()-1);
 
     }
+
     public String getName() {
         return name;
     }

@@ -7,16 +7,13 @@ package view;
 
 
 import controller.ShoppingCartController;
+import javafx.scene.control.*;
 import model.Product;
 import model.ShoppingCart;
 import observer.Observer;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Product;
@@ -33,11 +30,15 @@ public class ShoppingCartUI extends VBox implements Observer, ShoppinCartViewInt
 
     //controlos
     private TextField txtInputId;
+
     private Button btAddProduct;
+    private Button btRemoveProduct;
     private ListView<Product> listProductsView;
     private Label lblError;
-    
     private Label lblCount;
+
+    //alerta
+    private Alert totalPriceAlert;
 
     //modelo
     private final ShoppingCart model;
@@ -56,6 +57,8 @@ public class ShoppingCartUI extends VBox implements Observer, ShoppinCartViewInt
             this.listProductsView.getItems().clear();
             listProductsView.getItems().addAll(listProducts);
             lblCount.setText(""+ model.getTotal());
+
+
         }
     }
     
@@ -63,34 +66,42 @@ public class ShoppingCartUI extends VBox implements Observer, ShoppinCartViewInt
         
         this.txtInputId = new TextField();
         this.btAddProduct = new Button("Add");
+        this.btRemoveProduct = new Button("Remove");
         this.listProductsView = new ListView<>();
         lblError = new Label();
-        
         lblCount = new Label("0");
-        
-        HBox firstRow = new HBox(txtInputId,btAddProduct, new Label("Total Value"),lblCount);
+
+        this.totalPriceAlert = new Alert(Alert.AlertType.WARNING); //alerta
+
+        HBox firstRow = new HBox(txtInputId,btAddProduct, btRemoveProduct, new Label("Total Value"),lblCount);
         firstRow.setAlignment(Pos.CENTER);
         firstRow.setPadding(new Insets(2,2,2,2));
         firstRow.setSpacing(4);
 
         this.getChildren().addAll(firstRow, listProductsView, lblError);
     }
+
     @Override
     public void setTriggers(ShoppingCartController controller) {
+
         btAddProduct.setOnAction((ActionEvent event) -> {
             controller.doAddProduct();
         });
 
+        btRemoveProduct.setOnAction((ActionEvent event) -> {
+            controller.doRemoveProduct();
+        });
+
+        lblCount.textProperty().addListener((observable, oldValue, newValue) -> {
+            controller.checkTotalValue();
+        });
+
     }
-
-
 
     @Override
     public void showError(String msg) {
         lblError.setText(msg);
     }
-
-
 
     @Override
     public String getInputProductId() {
@@ -102,6 +113,29 @@ public class ShoppingCartUI extends VBox implements Observer, ShoppinCartViewInt
         txtInputId.setText("");
     }
 
-   
-    
+    // Alerta
+
+    @Override
+    public void showAlert(String title, String content){
+
+        totalPriceAlert.setTitle(title);
+        totalPriceAlert.setHeaderText(null);
+        totalPriceAlert.setContentText(content);
+        totalPriceAlert.showAndWait();
+
+    }
+
+    @Override
+    // Add methods to enable/disable the "Add" button
+    public void setAddButtonDisabled(boolean disabled) {
+        btAddProduct.setDisable(disabled);
+    }
+
+    @Override
+    // Add method to set the text fill color of lblCount
+    public void setLblCountTextFill(javafx.scene.paint.Color color) {
+        lblCount.setTextFill(color);
+    }
+
+
 }

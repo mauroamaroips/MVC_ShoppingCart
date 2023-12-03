@@ -6,6 +6,7 @@
 package view;
 
 import controller.ShoppingCartController;
+import javafx.scene.paint.Color;
 import observer.Observer;
 
 /**
@@ -21,4 +22,13 @@ public interface ShoppinCartViewInterface extends Observer {
     void showError(String msg);
 
     void setTriggers(ShoppingCartController controller);
+
+    //Adicionado em relação ao código original para suportar alert views
+    void showAlert(String title, String content);
+
+    // Adicionado em relação ao código original para suportar o desabilitar do botão "btAddProduct"
+    void setAddButtonDisabled(boolean disabled);
+
+    // Adicionado em relação ao código original para suportar a mundança de cor da label "lblCount"
+    void setLblCountTextFill(Color color);
 }
